@@ -1,0 +1,7 @@
+--extra-index-url https://azuremlsdktestpypi.azureedge.net/promptflow/
+flask
+requests
+gunicorn
+flask-cors
+python-dotenv
+promptflow==1.10.0.dev124299224
