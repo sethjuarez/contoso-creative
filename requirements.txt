@@ -4,4 +4,5 @@ requests
 gunicorn
 flask-cors
 python-dotenv
-promptflow==1.10.0.dev124299224
+promptflow
+./whl/prompty-0.1.20240411.181111-py3-none-any.whl
