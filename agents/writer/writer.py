@@ -3,6 +3,7 @@ import json
 import prompty
 
 
+@prompty.trace
 def execute(context, feedback, instructions, research=[]):
     result = prompty.execute(
         "writer.prompty",
@@ -16,6 +17,7 @@ def execute(context, feedback, instructions, research=[]):
     return result
 
 
+@prompty.trace
 def process(writer):
     # parse string this chracter --- , article and feedback
     result = writer.split("---")
@@ -26,11 +28,21 @@ def process(writer):
         feedback = "No Feedback"
 
     return {
-        "context": {
-            "article": article,
-            "feedback": feedback,
-        }
+        "article": article,
+        "feedback": feedback,
     }
+
+
+@prompty.trace
+def write(context, feedback, instructions, research):
+    result = execute(
+        context=context,
+        feedback=feedback,
+        instructions=instructions,
+        research=research,
+    )
+    processed = process(result)
+    return processed
 
 
 if __name__ == "__main__":

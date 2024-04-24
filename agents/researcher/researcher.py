@@ -133,6 +133,13 @@ def process(research):
     }
 
 
+@prompty.trace
+def research(context, instructions, feedback: str = ""):
+    r = execute(context=context, instructions=instructions, feedback=feedback)
+    p = process(r)
+    return p
+
+
 if __name__ == "__main__":
     # Get command line arguments
     if len(sys.argv) < 3:
