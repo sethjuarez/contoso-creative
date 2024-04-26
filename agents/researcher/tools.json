@@ -1,12 +1,7 @@
 [
   {
-    "id": "call_BkQlTfwubnnGYbSpVJEhus5I",
+    "id": "call_jKvxreRt9cRtddx5Grp31hIA",
     "name": "find_information",
-    "arguments": "{\"query\": \"Satya Nadella early career\", \"market\": \"es-ES\"}"
-  },
-  {
-    "id": "call_ilPwzoiIcVwkNGhCVE7UTrBq",
-    "name": "find_entities",
-    "arguments": "{\"query\": \"Satya Nadella\", \"market\": \"es-ES\"}"
+    "arguments": "{\"query\":\"latest camping trends 2024\",\"market\":\"en-US\"}"
   }
 ]

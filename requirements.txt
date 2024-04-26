@@ -1,8 +1,14 @@
---extra-index-url https://azuremlsdktestpypi.azureedge.net/promptflow/
+--index-url https://download.pytorch.org/whl/cu121
 flask
 requests
 gunicorn
 flask-cors
 python-dotenv
 promptflow
-./whl/prompty-0.1.20240411.181111-py3-none-any.whl
+./whl/prompty-0.1.20240426.183339-py3-none-any.whl
+torch
+torchvision
+torchaudio
+transformers
+wheel
+accelerate

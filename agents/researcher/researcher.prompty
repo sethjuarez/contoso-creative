@@ -5,15 +5,16 @@ authors:
   - Seth Juarez
 model:
   api: chat
-  configuration:
+  configuration: 
+    type: azure
     azure_deployment: gpt-35-turbo
   parameters:
-    tools: file:functions.json
+    tools: ${file:functions.json}
 sample:
-  context: I want to write an aritcle about Satya Nadella and his career begginings.
-  feedback: Can you dig deeper into his education too?
-  tools: file:tools.json
-  instructions: Can you get me information about Satya Nadella, his early work and education?
+  instructions: Can you find the latest camping trends for 2024?
+  feedback: Can you add more information about the most popular type of camping gear?
+  tools: ${file:tools.json}
+
 ---
 system:
 
