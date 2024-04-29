@@ -10,10 +10,10 @@ model:
   parameters:
     max_tokens: 1200
 sample:
-  context: I want to write an article about Satya Nadella and his career begginings.
-  feedback: No Feedback
-  instructions: Can you write an article about how his education influenced his career?
-  research: file:research.json
+  instructions: I want to write an article about Satya Nadella and his career begginings.
+  marketing: No Feedback
+  research: Can you write an article about how his education influenced his career?
+  products: ${file:research.json}
 ---
 system:
 

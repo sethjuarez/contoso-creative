@@ -1,7 +1,8 @@
 flask
 requests
 gunicorn
+promptflow
 flask-cors
 python-dotenv
-promptflow
+azure-search-documents
 ./whl/prompty-0.1.20240426.183339-py3-none-any.whl

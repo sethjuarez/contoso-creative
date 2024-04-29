@@ -72,7 +72,7 @@ def find_news(query, market="en-US"):
 
 
 @prompty.trace
-def execute(instructions: str):
+def execute(context: str):
     """Assign a research task to a researcher"""
     functions = {
         "find_information": find_information,
@@ -82,7 +82,7 @@ def execute(instructions: str):
     fns = prompty.execute(
         "researcher.prompty",
         inputs={
-            "instructions": instructions,
+            "context": context,
         },
     )
     research = []
@@ -140,10 +140,10 @@ def research(context, instructions, feedback: str = ""):
 if __name__ == "__main__":
     # Get command line arguments
     if len(sys.argv) < 2:
-        instructions = "Can you find the latest camping trends and what folks are doing in the winter?"
+        context = "Can you find the latest camping trends and what folks are doing in the winter?"
     else:
-        instructions = sys.argv[1]
+        context = sys.argv[1]
 
-    r = execute(instructions=instructions)
+    r = execute(context=context)
     processed = process(r)
     print(json.dumps(processed, indent=2))
