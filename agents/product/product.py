@@ -12,7 +12,6 @@ from azure.search.documents.models import (
     QueryAnswerType,
 )
 from azure.core.credentials import AzureKeyCredential
-
 load_dotenv()
 
 AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
@@ -77,7 +76,7 @@ def retrieve_products(items: List[Dict[str, any]], index_name: str) -> str:
         # Remove duplicates
         products.extend([i for i in docs if i["id"] not in [x["id"] for x in products]])
 
-    return {"requests": [item["item"] for item in items], "products": products}
+    return products
 
 
 @prompty.trace
