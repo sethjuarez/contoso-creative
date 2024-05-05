@@ -1,3 +1,4 @@
 {
   "python.defaultInterpreterPath": "./.venv/scripts/python.exe",
+  "python.terminal.activateEnvironment": true,
 }
