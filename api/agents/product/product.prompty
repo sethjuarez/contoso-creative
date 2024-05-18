@@ -7,9 +7,6 @@ model:
   api: chat
   configuration:
     azure_deployment: gpt-35-turbo
-  parameters:
-    response_format:
-      type: json_object
 sample:
   context: Can you use a selection of tents and backpacks as context?
 ---

@@ -1,7 +1,7 @@
 import os
 import json
 from typing import Dict, List
-import prompty
+from prompty import execute as flow
 from promptflow.tracing import trace
 from openai import AzureOpenAI
 from dotenv import load_dotenv
@@ -19,8 +19,8 @@ AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
 AZURE_OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY")
 AZURE_OPENAI_VERSION = "2023-07-01-preview"
 AZURE_OPENAI_DEPLOYMENT = "text-embedding-ada-002"
-AZURE_AI_SEARCH_ENDPOINT = os.getenv("AZURE_AI_SEARCH_ENDPOINT")
-AZURE_AI_SEARCH_KEY = os.getenv("AZURE_AI_SEARCH_KEY")
+AZURE_AI_SEARCH_ENDPOINT = os.getenv("AI_SEARCH_ENDPOINT")
+AZURE_AI_SEARCH_KEY = os.getenv("AI_SEARCH_KEY")
 AZURE_AI_SEARCH_INDEX = "contoso-products"
 
 
@@ -82,9 +82,12 @@ def retrieve_products(items: List[Dict[str, any]], index_name: str) -> str:
 
 @trace
 def find_products(context: str) -> Dict[str, any]:
-    queries = prompty.execute("product.prompty", inputs={"context": context})
+    # Get product queries
+    queries = flow("product.prompty", inputs={"context": context})
     qs = json.loads(queries)
-    items = generate_embeddings(qs["queries"])
+    # Generate embeddings
+    items = generate_embeddings(qs)
+    # Retrieve products
     products = retrieve_products(items, AZURE_AI_SEARCH_INDEX)
     return products
 

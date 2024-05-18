@@ -1,72 +1,85 @@
-from dataclasses import dataclass
 import json
 import logging
+from dataclasses import dataclass
+from typing import List, Literal, Union
 from dotenv import load_dotenv
-from agents.editor import editor
-from agents.writer import writer
 from flask_cors import cross_origin
-from agents.researcher import researcher
 from flask import Flask, stream_with_context, request, Response
+from promptflow.tracing import trace, start_trace
 
-@dataclass
-class Message:
-    type: str
-    contents: dict
-
-    def to_json(self):
-        return json.dumps(self.__dict__)
-    
-    @staticmethod
-    def from_json(json_str):
-        return Message(**json.loads(json_str))
-    
-    @staticmethod
-    def create(type, contents):
-        return Message(type, contents);
+# agents
+from agents.researcher import researcher
+from agents.product import product
+from agents.writer import writer
 
 load_dotenv()
-
-
-def _create_json_response(type, contents):
-    r = {"type": type, "contents": contents}
-    logging.debug(r)
-    s = json.dumps(r)
-    return s
-
 
 app = Flask(__name__)
 
 
-@app.route("/article", methods=["POST"])
+@dataclass
+class Message:
+    type: Literal["message", "researcher", "marketing", "writer"]
+    message: str
+    data: Union[dict,list]
+
+    def to_dict(self) -> str:
+        return self.__dict__
+
+    def to_json(self) -> str:
+        return json.dumps(self.__dict__) + ">>>>\n"
+
+    @staticmethod
+    def create(
+        type: Literal["message", "researcher", "marketing", "writer"],
+        message: str,
+        data: Union[dict, list, None] = None
+    ):
+        return Message(type, message, data)
+
+
+@trace
+def create(research_context, product_context, assignment_context):
+    try:
+        yield Message.create("message", "Starting research agent task...").to_json()
+        research_result = researcher.research(research_context)
+        yield Message.create(
+            "researcher", "Completed research task", research_result
+        ).to_json()
+
+        yield Message.create(
+            "message", "Starting product marketing agent task..."
+        ).to_json()
+        product_result = product.find_products(product_context)
+        yield Message.create(
+            "marketing", "Completed marketing task", product_result
+        ).to_json()
+
+        yield Message.create("message", "Starting writer agent task...").to_json()
+        writer_result = writer.write(
+            research_context,
+            research_result,
+            product_context,
+            product_result,
+            assignment_context,
+        )
+        yield Message.create("writer", "Completed writing task", writer_result).to_json()
+    except Exception as e:
+        yield Message.create("message", "An error occurred.", str(e)).to_json()
+
+
+@app.route("/api/article", methods=["POST"])
 @cross_origin()
 @stream_with_context
 def article():
     post = request.get_json()
-    context = post["context"]
-    instructions = post["instructions"]
-    feedback = "No Feedback"
-    researchFeedback = ""
-    retry_count = 2
+    research_context = post["research"]
+    product_context = post["products"]
+    assignment_context = post["assignment"]
 
-    while retry_count > 0:
-        yield _create_json_response("message", "Starting research agent task...")
-        research_result = researcher.research(context, instructions, researchFeedback)
-        yield _create_json_response("researcher", research_result)
+    for response in create(research_context, product_context, assignment_context):
+        yield response
 
-        yield _create_json_response("message", "Starting writer agent task...")
-        writer_result = writer.write(context, feedback, instructions, research_result)
-        yield _create_json_response("writer", writer_result)
-
-        yield _create_json_response("message", "Starting editor agent task...")
-        editor_result = editor.edit(writer_result["article"], writer_result["feedback"])
-        yield _create_json_response("editor", editor_result)
-
-        if str(editor_result["decision"]).lower().startswith("accept"):
-            break
-        else:
-            researchFeedback = editor_result.get("researchFeedback", "No Feedback")
-            feedback = editor_result.get("editorFeedback", "No Feedback")
-
-        retry_count -= 1
+    yield Message.create("message", "Task completed.").to_json()
 
     return Response(article(), mimetype="application/json")

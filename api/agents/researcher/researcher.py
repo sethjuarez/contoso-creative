@@ -1,10 +1,11 @@
 import json
 import os
-import prompty
+from prompty import execute as flow
 import requests
 import sys
 import urllib.parse
 from dotenv import load_dotenv
+from promptflow.tracing import trace
 
 load_dotenv()
 
@@ -26,7 +27,7 @@ def _make_request(path, params=None):
     return items
 
 
-@prompty.trace
+@trace
 def find_information(query, market="en-US"):
     """Find information using the Bing Search API"""
     params = {"q": query, "mkt": market, "count": 5}
@@ -39,7 +40,7 @@ def find_information(query, market="en-US"):
     return {"pages": pages, "related": related}
 
 
-@prompty.trace
+@trace
 def find_entities(query, market="en-US"):
     """Find entities using the Bing Entity Search API"""
     params = "?mkt=" + market + "&q=" + urllib.parse.quote(query)
@@ -53,7 +54,7 @@ def find_entities(query, market="en-US"):
     return entities
 
 
-@prompty.trace
+@trace
 def find_news(query, market="en-US"):
     """Find images using the Bing News Search API"""
     params = {"q": query, "mkt": market, "count": 5}
@@ -71,18 +72,18 @@ def find_news(query, market="en-US"):
     return articles
 
 
-@prompty.trace
-def execute(context: str):
+@trace
+def execute(instructions: str):
     """Assign a research task to a researcher"""
     functions = {
         "find_information": find_information,
         "find_entities": find_entities,
         "find_news": find_news,
     }
-    fns = prompty.execute(
+    fns = flow(
         "researcher.prompty",
         inputs={
-            "context": context,
+            "instructions": instructions,
         },
     )
     research = []
@@ -97,7 +98,7 @@ def execute(context: str):
     return research
 
 
-@prompty.trace
+@trace
 def process(research):
     """Process the research results"""
     # process web searches
@@ -130,9 +131,9 @@ def process(research):
     }
 
 
-@prompty.trace
-def research(context, instructions, feedback: str = ""):
-    r = execute(context=context, instructions=instructions, feedback=feedback)
+@trace
+def research(instructions: str):
+    r = execute(instructions=instructions)
     p = process(r)
     return p
 
@@ -140,10 +141,10 @@ def research(context, instructions, feedback: str = ""):
 if __name__ == "__main__":
     # Get command line arguments
     if len(sys.argv) < 2:
-        context = "Can you find the latest camping trends and what folks are doing in the winter?"
+        instructions = "Can you find the latest camping trends and what folks are doing in the winter?"
     else:
-        context = sys.argv[1]
+        instructions = sys.argv[1]
 
-    r = execute(context=context)
+    r = execute(instructions=instructions)
     processed = process(r)
     print(json.dumps(processed, indent=2))

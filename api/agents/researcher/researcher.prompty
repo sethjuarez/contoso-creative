@@ -13,7 +13,7 @@ model:
   parameters:
     tools: ${file:functions.json}
 sample:
-  context: Can you find the latest camping trends and what folks are doing in the winter?
+  instructions: Can you find the latest camping trends and what folks are doing in the winter?
 ---
 system:
 # Researcher Agent
@@ -48,4 +48,4 @@ Turkish,	tr-TR
 English,	en-US
 
 user:
-{{context}}
+{{instructions}}

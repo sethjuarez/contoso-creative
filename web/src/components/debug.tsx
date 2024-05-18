@@ -29,7 +29,7 @@ export const Debug = () => {
           behavior: "smooth",
         });
       }
-    }, 100);
+    }, 300);
   };
 
   useEffect(() => {
@@ -44,11 +44,11 @@ export const Debug = () => {
     switch (type) {
       case "message":
         return "bg-stone-200 text-zinc-600";
-      case "inspector":
+      case "researcher":
         return "bg-sky-200 text-zinc-600";
-      case "support":
+      case "marketing":
         return "bg-green-200 text-zinc-600";
-      case "customer":
+      case "writer":
         return "bg-violet-200 text-zinc-600";
       case "error":
         return "bg-red-200 text-zinc-600";
@@ -61,11 +61,11 @@ export const Debug = () => {
     switch (type) {
       case "message":
         return <InformationCircleIcon className="w-6 stroke-stone-600" />;
-      case "inspector":
+      case "researcher":
         return <BeakerIcon className="w-6 stroke-sky-600" />;
-      case "support":
+      case "marketing":
         return <AcademicCapIcon className="w-6 stroke-green-600" />;
-      case "customer":
+      case "writer":
         return <UserIcon className="w-6 stroke-violet-600" />;
       case "error":
         return <BugAntIcon className="w-6 stroke-red-600" />;
@@ -85,7 +85,7 @@ export const Debug = () => {
           {messages.map((message, i) => (
             <div className="flex flex-row-reverse gap-1" key={`message_${i}`}>
               <div
-                className={clsx("grow p-2 rounded-md", getColor(message.type))}
+                className={clsx("grow p-2 rounded-md w-[370px]", getColor(message.type))}
               >
                 <div
                   className={clsx(

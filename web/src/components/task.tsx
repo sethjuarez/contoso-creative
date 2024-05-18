@@ -1,9 +1,53 @@
 import {
   PaperAirplaneIcon,
-  ClipboardDocumentIcon
+  ClipboardDocumentIcon,
+  ArrowPathIcon,
 } from "@heroicons/react/24/outline";
+import { useState } from "react";
+import { IMessage, startWritingTask } from "../store";
+import { useAppDispatch } from "../store/hooks";
+import { addMessage } from "../store/messageSlice";
+import { addArticle } from "../store/articleSlice";
 
 export const Task = () => {
+  const [research, setResearch] = useState("");
+  const [products, setProducts] = useState("");
+  const [writing, setWriting] = useState("");
+
+  const dispatch = useAppDispatch();
+
+  const setExample = () => {
+    setResearch(
+      "Can you find the latest camping trends and what folks are doing in the winter?"
+    );
+    setProducts("Can you use a selection of tents and sleeping bags as context?");
+    setWriting(
+      "Write a fun and engaging article that includes the research and product information. The article should be between 800 and 1000 words."
+    );
+  };
+
+
+  const reset = () => {
+    setResearch("");
+    setProducts("");
+    setWriting("");
+  };
+
+  const newMessage = (message: IMessage) => {
+    dispatch(addMessage(message));
+  };
+
+  const newArticle = (article: string) => {
+    dispatch(addArticle(article));
+  };
+
+  const startWork = () => {
+    if (research === "" || products === "" || writing === "") {
+      return;
+    }
+    startWritingTask(research, products, writing, newMessage, newArticle);
+  }
+
   return (
     <div className="p-3">
       <div className="text-start">
@@ -24,7 +68,8 @@ export const Task = () => {
               rows={3}
               cols={60}
               className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              defaultValue={""}
+              value={research}
+              onChange={(e) => setResearch(e.target.value)}
             />
           </div>
         </div>
@@ -47,7 +92,8 @@ export const Task = () => {
             rows={3}
             cols={60}
             className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            defaultValue={""}
+            value={products}
+            onChange={(e) => setProducts(e.target.value)}
           />
         </div>
       </div>
@@ -67,22 +113,33 @@ export const Task = () => {
             name="writing"
             rows={3}
             cols={60}
-            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            defaultValue={""}
+            className="p-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            value={writing}
+            onChange={(e) => setWriting(e.target.value)}
           />
         </div>
       </div>
-      <div className="flex justify-end gap-2 mt-12">
+      <div className="flex justify-end gap-2 mt-10">
         <button
           type="button"
           className="flex flex-row gap-3 items-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          onClick={reset}
+        >
+          <ArrowPathIcon className="w-6" />
+          <span>Reset</span>
+        </button>
+        <button
+          type="button"
+          className="flex flex-row gap-3 items-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          onClick={setExample}
         >
           <ClipboardDocumentIcon className="w-6" />
           <span>Example</span>
         </button>
         <button
           type="button"
-          className="flex flex-row gap-3 items-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          className="flex flex-row gap-3 items-center rounded-md bg-blue-100 px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          onClick={startWork}
         >
           <PaperAirplaneIcon className="w-6" />
           <span>Start Work</span>
