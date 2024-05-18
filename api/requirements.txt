@@ -5,4 +5,4 @@ promptflow
 flask-cors
 python-dotenv
 azure-search-documents
-./whl/prompty-0.1.20240426.183339-py3-none-any.whl
+./whl/prompty-0.1.20240505.73211-py3-none-any.whl

@@ -8,7 +8,7 @@ authors:
 model:
   api: chat
   configuration: 
-    type: azure
+    type: azure_openai
     azure_deployment: gpt-35-turbo
   parameters:
     tools: ${file:functions.json}
