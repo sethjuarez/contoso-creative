@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import json
 import logging
 from dotenv import load_dotenv
@@ -6,6 +7,22 @@ from agents.writer import writer
 from flask_cors import cross_origin
 from agents.researcher import researcher
 from flask import Flask, stream_with_context, request, Response
+
+@dataclass
+class Message:
+    type: str
+    contents: dict
+
+    def to_json(self):
+        return json.dumps(self.__dict__)
+    
+    @staticmethod
+    def from_json(json_str):
+        return Message(**json.loads(json_str))
+    
+    @staticmethod
+    def create(type, contents):
+        return Message(type, contents);
 
 load_dotenv()
 

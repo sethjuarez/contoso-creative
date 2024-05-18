@@ -2,6 +2,7 @@ import os
 import json
 from typing import Dict, List
 import prompty
+from promptflow.tracing import trace
 from openai import AzureOpenAI
 from dotenv import load_dotenv
 from azure.search.documents import SearchClient
@@ -23,7 +24,7 @@ AZURE_AI_SEARCH_KEY = os.getenv("AZURE_AI_SEARCH_KEY")
 AZURE_AI_SEARCH_INDEX = "contoso-products"
 
 
-@prompty.trace
+@trace
 def generate_embeddings(queries: List[str]) -> str:
 
     client = AzureOpenAI(
@@ -40,7 +41,7 @@ def generate_embeddings(queries: List[str]) -> str:
     return items
 
 
-@prompty.trace
+@trace
 def retrieve_products(items: List[Dict[str, any]], index_name: str) -> str:
     search_client = SearchClient(
         endpoint=AZURE_AI_SEARCH_ENDPOINT,
@@ -79,7 +80,7 @@ def retrieve_products(items: List[Dict[str, any]], index_name: str) -> str:
     return products
 
 
-@prompty.trace
+@trace
 def find_products(context: str) -> Dict[str, any]:
     queries = prompty.execute("product.prompty", inputs={"context": context})
     qs = json.loads(queries)

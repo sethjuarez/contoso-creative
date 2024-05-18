@@ -1,0 +1,16 @@
+{
+  "name": "contoso-support",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run client\" \"npm run server\"",
+    "client": "cd web && npm run dev",
+    "server": "flask --debug --app api/app:app run --port 5000"
+  },
+  "author": "Seth Juarez",
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
