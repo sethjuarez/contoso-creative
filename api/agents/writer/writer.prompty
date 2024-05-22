@@ -6,7 +6,8 @@ authors:
 model:
   api: chat
   configuration:
-    azure_deployment: gpt-4
+    type: azure_openai
+    azure_deployment: gpt-4o
   parameters:
     max_tokens: 1200
 sample:

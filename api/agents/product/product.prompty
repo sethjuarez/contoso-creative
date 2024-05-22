@@ -1,12 +1,15 @@
 ---
-name: Contoso Sales Writer
+name: Contoso Product Reasearch
 description: A prompt that uses context to ground an incoming question
 authors:
   - Seth Juarez
 model:
   api: chat
   configuration:
+    type: azure_openai
     azure_deployment: gpt-35-turbo
+  parameters:
+    stream: false
 sample:
   context: Can you use a selection of tents and backpacks as context?
 ---

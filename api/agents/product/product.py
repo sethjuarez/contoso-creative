@@ -1,10 +1,11 @@
 import os
 import json
 from typing import Dict, List
-from prompty import execute as flow
 from promptflow.tracing import trace
+from promptflow.core import Flow
 from openai import AzureOpenAI
 from dotenv import load_dotenv
+from pathlib import Path
 from azure.search.documents import SearchClient
 from azure.search.documents.models import (
     VectorizedQuery,
@@ -14,6 +15,8 @@ from azure.search.documents.models import (
 )
 from azure.core.credentials import AzureKeyCredential
 load_dotenv()
+
+base = Path(__file__).parent
 
 AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
 AZURE_OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY")
@@ -83,7 +86,9 @@ def retrieve_products(items: List[Dict[str, any]], index_name: str) -> str:
 @trace
 def find_products(context: str) -> Dict[str, any]:
     # Get product queries
-    queries = flow("product.prompty", inputs={"context": context})
+    #flow = Flow.load(base / "researcher.prompty")
+    flow = Flow.load(base / "product.prompty")
+    queries = flow(context=context)
     qs = json.loads(queries)
     # Generate embeddings
     items = generate_embeddings(qs)

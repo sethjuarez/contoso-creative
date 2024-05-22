@@ -1,7 +1,7 @@
 import json
 import logging
 from dataclasses import dataclass
-from typing import List, Literal, Union
+from typing import Generator, List, Literal, Union
 from dotenv import load_dotenv
 from flask_cors import cross_origin
 from flask import Flask, stream_with_context, request, Response
@@ -13,6 +13,8 @@ from agents.product import product
 from agents.writer import writer
 
 load_dotenv()
+
+start_trace()
 
 app = Flask(__name__)
 
@@ -39,7 +41,7 @@ class Message:
 
 
 @trace
-def create(research_context, product_context, assignment_context):
+def create(research_context, product_context, assignment_context) -> Generator[Message, None, None]:
     try:
         yield Message.create("message", "Starting research agent task...").to_json()
         research_result = researcher.research(research_context)
@@ -70,6 +72,7 @@ def create(research_context, product_context, assignment_context):
 
 @app.route("/api/article", methods=["POST"])
 @cross_origin()
+@trace
 @stream_with_context
 def article():
     post = request.get_json()

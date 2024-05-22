@@ -2,7 +2,8 @@ flask
 requests
 gunicorn
 promptflow
+promptflow-core
+promptflow-tracing
 flask-cors
 python-dotenv
 azure-search-documents==11.4.0
-./whl/prompty-0.1.20240505.73211-py3-none-any.whl

@@ -1,17 +1,21 @@
-import json
 import os
-from prompty import execute as flow
-import requests
 import sys
+import json
+import requests
 import urllib.parse
+from pathlib import Path
 from dotenv import load_dotenv
+from promptflow.core import Flow
 from promptflow.tracing import trace
+from openai.types.chat.chat_completion import ChatCompletion
 
 load_dotenv()
 
 BING_SEARCH_ENDPOINT = os.getenv("BING_SEARCH_ENDPOINT")
 BING_SEARCH_KEY = os.getenv("BING_SEARCH_KEY")
 BING_HEADERS = {"Ocp-Apim-Subscription-Key": BING_SEARCH_KEY}
+
+base = Path(__file__).parent
 
 
 def _make_endpoint(endpoint, path):
@@ -80,19 +84,18 @@ def execute(instructions: str):
         "find_entities": find_entities,
         "find_news": find_news,
     }
-    fns = flow(
-        "researcher.prompty",
-        inputs={
-            "instructions": instructions,
-        },
-    )
+
+    flow = Flow.load(base / "researcher.prompty")
+    fns = flow(instructions=instructions)
+
     research = []
-    for f in fns:
-        fn = functions[f.name]
-        args = json.loads(f.arguments)
+    for f in fns["tool_calls"]:
+        func = f['function']
+        fn = functions[func["name"]]
+        args = json.loads(func["arguments"])
         r = fn(**args)
         research.append(
-            {"id": f.id, "function": f.name, "arguments": args, "result": r}
+            {"id": f["id"], "function": func["name"], "arguments": args, "result": r}
         )
 
     return research
